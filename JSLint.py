@@ -9,6 +9,7 @@ import codecs
 import re
 
 from threading import Timer
+import threading
 
 import sublime
 import sublime_plugin
@@ -25,19 +26,28 @@ KEYMAP_FILE = "Default ($PLATFORM).sublime-keymap"
 OUTPUT_VALID = b"*** JSLint output ***"
 
 
+class RunThread(threading.Thread):
+
+    def __init__(self, cmd):
+        self.cmd = cmd
+        self.output = None
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self.output = PluginUtils.get_output(self.cmd)
+
+
 class JslintCommand(sublime_plugin.TextCommand):
 
-    def run(self, edit, show_regions=True, show_panel=True):
-        # Make sure we're only linting javascript files.
-        if self.file_unsupported():
-            return
+    def __init__(self, view):
+        self.runner = None
+        sublime_plugin.TextCommand.__init__(self, view)
 
-        # Get the current text in the buffer and save it in a temporary file.
-        # This allows for scratch buffers and dirty files to be linted as well.
-        temp_file_path = self.save_buffer_to_temp_file()
-        output = self.run_script_on_file(temp_file_path)
+    def handel_output(self, output, temp_file_path):
         os.remove(temp_file_path)
+        self.runner = None
 
+        self.is_valid_output(output)
         # Dump any diagnostics and get the output after the identification marker.
         if PluginUtils.get_pref('print_diagnostics'):
             print(self.get_output_diagnostics(output))
@@ -70,10 +80,34 @@ class JslintCommand(sublime_plugin.TextCommand):
             menuitems.append(line_no + ":" + column_no + " " + description)
             JslintGlobalStore.errors.append((hint_region, description))
 
-        if show_regions:
+        if self.show_regions:
             self.add_regions(regions)
-        if show_panel:
+        if self.show_panel:
             self.view.window().show_quick_panel(menuitems, self.on_quick_panel_selection)
+
+    def handle_runer(self):
+        if(self.runner.is_alive()):
+            sublime.set_timeout(lambda: self.handle_runer(), 100)
+        else:
+            self.handel_output(self.runner.output, self.temp_file_path)
+
+    def run(self, edit, show_regions=True, show_panel=True):
+        # Make sure we're only linting javascript files.
+        if self.file_unsupported():
+            return
+
+        if(self.runner):
+            return
+
+        self.show_panel = show_panel
+        self.show_regions = show_regions
+
+        temp_file_path = self.save_buffer_to_temp_file()
+        self.temp_file_path = temp_file_path
+        self.runner = RunThread(self.get_cmd(temp_file_path))
+        self.runner.start()
+        sublime.set_timeout(lambda: self.handle_runer(), 100)
+        return
 
     def file_unsupported(self):
         file_path = self.view.file_name()
@@ -92,19 +126,20 @@ class JslintCommand(sublime_plugin.TextCommand):
         f.close()
         return temp_file_path
 
-    def run_script_on_file(self, temp_file_path):
-        try:
-            node_path = PluginUtils.get_node_path()
-            script_path = PLUGIN_FOLDER + "/scripts/run.js"
-            file_path = self.view.file_name()
-            cmd = [node_path, script_path, temp_file_path, file_path or "?"]
-            output = PluginUtils.get_output(cmd)
+    def get_cmd(self, temp_file_path):
+        node_path = PluginUtils.get_node_path()
+        script_path = PLUGIN_FOLDER + "/scripts/run.js"
+        file_path = self.view.file_name()
+        cmd = [node_path, script_path, temp_file_path, file_path or "?"]
+        return cmd
 
+    def is_valid_output(self, output):
+        try:
             # Make sure the correct/expected output is retrieved.
             if output.find(OUTPUT_VALID) != -1:
                 return output
 
-            msg = "Command " + '" "'.join(cmd) + " created invalid output."
+            msg = "Command " + '" "'.join(self.get_cmd()) + " created invalid output."
             print(output)
             raise Exception(msg)
 
