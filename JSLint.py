@@ -132,7 +132,7 @@ class JslintCommand(sublime_plugin.TextCommand):
         package_name = (PLUGIN_FOLDER.split(os.path.sep))[-1]
 
         if int(sublime.version()) >= 3000:
-            icon = "Packages/" + package_name + "/warning.png"
+            icon = "Packages/" + package_name + "/imgs/warning.png"
             self.view.add_regions(
                     "jslint_errors",
                     regions,
@@ -144,7 +144,7 @@ class JslintCommand(sublime_plugin.TextCommand):
                     sublime.DRAW_SQUIGGLY_UNDERLINE
                 )
         else:
-            icon = ".." + os.path.sep + package_name + os.path.sep + "warning"
+            icon = ".." + os.path.sep + package_name + os.path.sep + "imgs" + os.path.sep + "warning"
             self.view.add_regions(
                     "jslint_errors",
                     regions,
