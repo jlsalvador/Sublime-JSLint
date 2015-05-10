@@ -201,7 +201,7 @@
             .replace("{d}", e.d);
         */
 
-        console.log([e.line + 1 + lineOffset, e.column + charOffset, e.message].join(" :: "));
+        console.log([e.line + 1 + lineOffset, e.column + 1 + charOffset, e.message].join(" :: "));
       });
   }
 }());
