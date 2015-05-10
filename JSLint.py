@@ -171,7 +171,7 @@ class JslintCommand(sublime_plugin.TextCommand):
             self.view.add_regions(
                     "jslint_errors",
                     regions,
-                    "keyword",
+                    "invalid",
                     icon,
                     sublime.DRAW_EMPTY |
                     sublime.DRAW_NO_FILL |
@@ -183,7 +183,7 @@ class JslintCommand(sublime_plugin.TextCommand):
             self.view.add_regions(
                     "jslint_errors",
                     regions,
-                    "keyword",
+                    "invalid",
                     icon,
                     sublime.DRAW_EMPTY | sublime.DRAW_OUTLINED
                 )
