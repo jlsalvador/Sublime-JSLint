@@ -4,7 +4,7 @@
   // http://nodejs.org/#download
   "node_path": {
     "windows": "C:/Program Files/nodejs/node.exe",
-    "linux": "/usr/bin/nodejs",
+    "linux": "/usr/bin/node",
     "osx": "/usr/local/bin/node"
   },
 
@@ -23,6 +23,6 @@
   // Highlight problematic regions when selected.
   "highlight_selected_regions": false,
 
-  // Log the settings passed to JSHint from `.jshintrc`.
+  // Log the settings passed to JSLint from `.jslintrc`.
   "print_diagnostics": true
 }

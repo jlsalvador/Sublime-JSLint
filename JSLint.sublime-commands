@@ -1,19 +1,19 @@
 [{
-  "caption": "JSHint",
-  "command": "jshint"
+  "caption": "JSLint",
+  "command": "jslint"
 }, {
-  "caption": "JSHint: Set Linting Preferences",
-  "command": "jshint_set_linting_prefs"
+  "caption": "JSLint: Set Linting Preferences",
+  "command": "jslint_set_linting_prefs"
 }, {
-  "caption": "JSHint: Set Plugin Options",
-  "command": "jshint_set_plugin_options"
+  "caption": "JSLint: Set Plugin Options",
+  "command": "jslint_set_plugin_options"
 }, {
-  "caption": "JSHint: Set Keyboard Shortcuts",
-  "command": "jshint_set_keyboard_shortcuts"
+  "caption": "JSLint: Set Keyboard Shortcuts",
+  "command": "jslint_set_keyboard_shortcuts"
 }, {
-  "caption": "JSHint: Set `node` Path",
-  "command": "jshint_set_node_path"
+  "caption": "JSLint: Set `node` Path",
+  "command": "jslint_set_node_path"
 }, {
-  "caption": "JSHint: Clear Annotations",
-  "command": "jshint_clear_annotations"
+  "caption": "JSLint: Clear Annotations",
+  "command": "jslint_clear_annotations"
 }]

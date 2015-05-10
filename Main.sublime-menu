@@ -1,26 +1,26 @@
 [{
   "id": "tools",
   "children": [{
-    "id": "jshint_tools",
-    "caption": "JSHint",
+    "id": "jslint_tools",
+    "caption": "JSLint",
     "children": [{
       "caption": "Lint Code",
-      "command": "jshint"
+      "command": "jslint"
     }, {
       "caption": "Set Linting Preferences",
-      "command": "jshint_set_linting_prefs"
+      "command": "jslint_set_linting_prefs"
     }, {
       "caption": "Set Plugin Options",
-      "command": "jshint_set_plugin_options"
+      "command": "jslint_set_plugin_options"
     }, {
       "caption": "Set Keyboard Shortcuts",
-      "command": "jshint_set_keyboard_shortcuts"
+      "command": "jslint_set_keyboard_shortcuts"
     }, {
       "caption": "Clear Annotations",
-      "command": "jshint_clear_annotations"
+      "command": "jslint_clear_annotations"
     }, {
       "caption": "Set `node` Path",
-      "command": "jshint_set_node_path"
+      "command": "jslint_set_node_path"
     }]
   }]
 }, {
@@ -28,25 +28,25 @@
   "children": [{
     "id": "package-settings",
     "children": [{
-      "caption": "JSHint Gutter",
+      "caption": "JSLint Gutter",
       "children": [{
         "caption": "Lint Code",
-        "command": "jshint"
+        "command": "jslint"
       }, {
         "caption": "Set Linting Preferences",
-        "command": "jshint_set_linting_prefs"
+        "command": "jslint_set_linting_prefs"
       }, {
         "caption": "Set Plugin Options",
-        "command": "jshint_set_plugin_options"
+        "command": "jslint_set_plugin_options"
       }, {
         "caption": "Set Keyboard Shortcuts",
-        "command": "jshint_set_keyboard_shortcuts"
+        "command": "jslint_set_keyboard_shortcuts"
       }, {
         "caption": "Clear Annotations",
-        "command": "jshint_clear_annotations"
+        "command": "jslint_clear_annotations"
       }, {
         "caption": "Set `node` Path",
-        "command": "jshint_set_node_path"
+        "command": "jslint_set_node_path"
       }]
     }]
   }]

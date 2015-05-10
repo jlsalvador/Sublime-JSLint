@@ -1,206 +1,207 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-"use strict";
 
-var path = require("path");
-var fs = require("fs");
-var jshint = require("jshint").JSHINT;
-var minify = require("jsonminify");
+(function () {
+  "use strict";
 
-// Older versions of node have `existsSync` in the `path` module, not `fs`. Meh.
-fs.existsSync = fs.existsSync || path.existsSync;
-path.sep = path.sep || "/";
+  var path = require("path");
+  var fs = require("fs");
+  var jslint = require("./jslint.js").jslint;
+  var minify = require("jsonminify");
 
-var tempPath = process.argv[2] || ""; // The source file to be linted.
-var filePath = process.argv[3] || ""; // The original source's path.
-var pluginFolder = path.dirname(__dirname);
-var sourceFolder = path.dirname(filePath);
-var options = {};
-var globals = {};
+  // Older versions of node have `existsSync` in the `path` module, not `fs`. Meh.
+  fs.existsSync = fs.existsSync || path.existsSync;
+  path.sep = path.sep || "/";
 
-var jshintrcPath;
-var packagejsonPath;
+  var tempPath = process.argv[2] || ""; // The source file to be linted.
+  var filePath = process.argv[3] || ""; // The original source's path.
+  var pluginFolder = path.dirname(__dirname);
+  var sourceFolder = path.dirname(filePath);
+  var options = {};
+  var globals = {};
 
-// Try and get some persistent options from the plugin folder.
-if (fs.existsSync(jshintrcPath = pluginFolder + path.sep + ".jshintrc")) {
-  setOptions(jshintrcPath, false, options, globals);
-}
+  var jslintrcPath;
+  var packagejsonPath;
 
-// When a JSHint config file exists in the same directory as the source file,
-// any directory above, or the user's home folder, then use that configuration
-// to overwrite the default prefs.
-var sourceFolderParts = path.resolve(sourceFolder).split(path.sep);
-
-var pathsToLook = sourceFolderParts.map(function(value, key) {
-  return sourceFolderParts.slice(0, key + 1).join(path.sep);
-});
-
-// Start with the current directory first, end with the user's home folder.
-pathsToLook.reverse();
-pathsToLook.push(getUserHome());
-
-pathsToLook.some(function(pathToLook) {
-  if (fs.existsSync(jshintrcPath = path.join(pathToLook, ".jshintrc"))) {
-    return setOptions(jshintrcPath, false, options, globals);
-  }
-  if (fs.existsSync(packagejsonPath = path.join(pathToLook, "package.json"))) {
-    return setOptions(packagejsonPath, true, options, globals);
-  }
-});
-
-// Dump some diagnostics messages, parsed out by the plugin.
-console.log("Using JSHint globals: " + JSON.stringify(globals));
-console.log("Using JSHint options: " + JSON.stringify(options, null, 2));
-
-// Read the source file and, when done, lint the code.
-fs.readFile(tempPath, "utf8", function(err, data) {
-  if (err) {
-    return;
+  // Try and get some persistent options from the plugin folder.
+  if (fs.existsSync(jslintrcPath = pluginFolder + path.sep + ".jslintrc")) {
+    setOptions(jslintrcPath, false, options, globals);
   }
 
-  // Mark the output as being from JSHint.
-  console.log("*** JSHint output ***");
+  // When a JSHint config file exists in the same directory as the source file,
+  // any directory above, or the user's home folder, then use that configuration
+  // to overwrite the default prefs.
+  var sourceFolderParts = path.resolve(sourceFolder).split(path.sep);
 
-  // If this is a markup file (html, xml, xhtml etc.), then javascript
-  // is maybe present in a <script> tag. Try to extract it and lint.
-  if (data.match(/^\s*</)) {
-    // First non whitespace character is &lt, so most definitely markup.
-    var regexp = /<script[^>]*>([^]*?)<\/script\s*>/gim;
-    var script;
+  var pathsToLook = sourceFolderParts.map(function(value, key) {
+    return sourceFolderParts.slice(0, key + 1).join(path.sep);
+  });
 
-    while (script = regexp.exec(data)) {
-      // Script contents are captured at index 1.
-      var text = script[1];
+  // Start with the current directory first, end with the user's home folder.
+  pathsToLook.reverse();
+  pathsToLook.push(getUserHome());
 
-      // Count all the lines up to and including the script tag.
-      var prevLines = data.substr(0, data.indexOf(text)).split("\n");
-      var lineOffset = prevLines.length - 1;
-      doLint(text, options, globals, lineOffset, 0);
+  pathsToLook.some(function(pathToLook) {
+    if (fs.existsSync(jslintrcPath = path.join(pathToLook, ".jslintrc"))) {
+      return setOptions(jslintrcPath, false, options, globals);
     }
-  } else {
-    doLint(data, options, globals, 0, 0);
-  }
-});
+    if (fs.existsSync(packagejsonPath = path.join(pathToLook, "package.json"))) {
+      return setOptions(packagejsonPath, true, options, globals);
+    }
+  });
 
-// Some handy utility functions.
+  // Dump some diagnostics messages, parsed out by the plugin.
+  console.log("Using JSLint globals: " + JSON.stringify(globals));
+  console.log("Using JSLint options: " + JSON.stringify(options, null, 2));
 
-function isTrue(value) {
-  return value == "true" || value == true;
-}
+  // Read the source file and, when done, lint the code.
+  fs.readFile(tempPath, "utf8", function(err, data) {
+    if (err) {
+      return;
+    }
 
-function getUserHome() {
-  return process.env.HOME || path.join(process.env.HOMEDRIVE, process.env.HOMEPATH) || process.env.USERPROFILE;
-}
+    // Mark the output as being from JSLint.
+    console.log("*** JSLint output ***");
 
-function mergeOptions(source, target) {
-  for (var entry in source) {
-    if (entry === "globals") {
-      if (!target[entry]) target[entry] = {};
-      mergeOptions(source[entry], target[entry]);
+    // If this is a markup file (html, xml, xhtml etc.), then javascript
+    // is maybe present in a <script> tag. Try to extract it and lint.
+    if (data.match(/^\s*</)) {
+      // First non whitespace character is &lt, so most definitely markup.
+      var regexp = /<script[^>]*>([^]*?)<\/script\s*>/gim;
+      var script, text, prevLines, lineOffset;
+
+      while (script = regexp.exec(data)) {
+        // Script contents are captured at index 1.
+        text = script[1];
+
+        // Count all the lines up to and including the script tag.
+        prevLines = data.substr(0, data.indexOf(text)).split("\n");
+        lineOffset = prevLines.length - 1;
+        doLint(text, options, globals, lineOffset, 0);
+      }
     } else {
-      target[entry] = source[entry];
+      doLint(data, options, globals, 0, 0);
     }
+  });
+
+  // Some handy utility functions.
+
+  function isTrue(value) {
+    return value === "true" || value === true;
   }
-}
 
-function parseJSON(file) {
-  try {
-    var options = JSON.parse(minify(fs.readFileSync(file, "utf8")));
-    if (!options.extends) { return options; }
-    // Get the options from base file.
-    var baseFile = options.extends;
-    file = path.resolve(path.dirname(file), baseFile);
-    var baseOptions = parseJSON(file);
-    // Overwrite base options with local options.
-    delete options.extends;
-    mergeOptions(options, baseOptions);
-    return baseOptions;
-  } catch (e) {
-    console.log("Could not parse JSON at: " + file);
-    return {};
+  function getUserHome() {
+    return process.env.HOME || path.join(process.env.HOMEDRIVE, process.env.HOMEPATH) || process.env.USERPROFILE;
   }
-}
 
-function setOptions(file, isPackageJSON, optionsStore, globalsStore) {
-  var obj = parseJSON(file);
-
-  // Handle jshintConfig on package.json (NPM) files
-  if (isPackageJSON) {
-    if (obj.jshintConfig) {
-      obj = obj.jshintConfig;
-    } else {
-      return false;
+  function mergeOptions(source, target) {
+    for (var entry in source) {
+      if (entry === "globals") {
+        if (!target[entry]) target[entry] = {};
+        mergeOptions(source[entry], target[entry]);
+      } else {
+        target[entry] = source[entry];
+      }
     }
   }
 
-  for (var key in obj) {
-    var value = obj[key];
+  function parseJSON(file) {
+    try {
+      var options = JSON.parse(minify(fs.readFileSync(file, "utf8")));
+      if (!options.extends) { return options; }
+      // Get the options from base file.
+      var baseFile = options.extends;
+      file = path.resolve(path.dirname(file), baseFile);
+      var baseOptions = parseJSON(file);
+      // Overwrite base options with local options.
+      delete options.extends;
+      mergeOptions(options, baseOptions);
+      return baseOptions;
+    } catch (e) {
+      console.log("Could not parse JSON at: " + file);
+      return {};
+    }
+  }
 
-    // Globals are defined as either an array, or an object with keys as names,
-    // and a boolean value to determine if they are assignable.
-    if (key == "globals" || key == "predef") {
-      if (value instanceof Array) {
-        for (var i = 0; i < value.length; i++) {
-          var name = value[i];
-          globalsStore[name] = true;
+  function setOptions(file, isPackageJSON, optionsStore, globalsStore) {
+    var obj = parseJSON(file);
+
+    // Handle jslintConfig on package.json (NPM) files
+    if (isPackageJSON) {
+      if (obj.jslintConfig) {
+        obj = obj.jslintConfig;
+      } else {
+        return false;
+      }
+    }
+
+    for (var key in obj) {
+      var value = obj[key];
+
+      // Globals are defined as either an array, or an object with keys as names,
+      // and a boolean value to determine if they are assignable.
+      if (key == "globals" || key == "predef") {
+        if (value instanceof Array) {
+          for (var i = 0; i < value.length; i++) {
+            var name = value[i];
+            globalsStore[name] = true;
+          }
+        } else {
+          for (var index in value) {
+            globalsStore[index] = isTrue(value[index]);
+          }
         }
       } else {
-        for (var name in value) {
-          globalsStore[name] = isTrue(value[name]);
+        // Special case "true" and "false" pref values as actually booleans.
+        // This avoids common accidents in .jslintrc json files.
+        if (value == "true" || value == "false") {
+          optionsStore[key] = isTrue(value);
+        } else {
+          optionsStore[key] = value;
         }
       }
-    } else {
-      // Special case "true" and "false" pref values as actually booleans.
-      // This avoids common accidents in .jshintrc json files.
-      if (value == "true" || value == "false") {
-        optionsStore[key] = isTrue(value);
-      } else {
-        optionsStore[key] = value;
-      }
     }
+
+    // Options were set successfully.
+    return true;
   }
 
-  // Options were set successfully.
-  return true;
-}
+  function doLint(data, options, globals, lineOffset, charOffset) {
 
-function doLint(data, options, globals, lineOffset, charOffset) {
-  // Lint the code and write readable error output to the console.
-  try {
-    jshint(data, options, globals);
-  } catch (e) {}
+    var result = {
+      warnings: []
+    };
 
-  jshint.errors
-    .sort(function(first, second) {
-      first = first || {};
-      second = second || {};
+    // Globals to JSLint
+    var globalList = [];
+    for (var global in globals) {
+      if (globals[global]) globalList.push(global);
+    }
 
-      if (!first.line) {
-        return 1;
-      } else if (!second.line){
-        return -1;
-      } else if (first.line == second.line) {
-        return +first.character < +second.character ? -1 : 1;
-      } else {
-        return +first.line < +second.line ? -1 : 1;
-      }
-    })
-    .forEach(function(e) {
-      // If the argument is null, then we could not continue (too many errors).
-      if (!e) {
-        return;
-      }
+    // Lint the code and write readable error output to the console.
+    try {
+      result = jslint(data, options, globalList);
+    } catch (e) {}
 
-      // Do some formatting if the error data is available.
-      if (e.raw) {
-        var message = e.raw
-          .replace("{a}", e.a)
-          .replace("{b}", e.b)
-          .replace("{c}", e.c)
-          .replace("{d}", e.d);
+    result.warnings.forEach(function(e) {
 
-        console.log([e.line + lineOffset, e.character + charOffset, message].join(" :: "));
-      }
-    });
-}
+        // If the argument is null, then we could not continue (too many errors).
+        if (!e) {
+          return;
+        }
+
+        // Do some formatting if the error data is available.
+        /*
+        if (e.raw) {
+          var message = e.raw
+            .replace("{a}", e.a)
+            .replace("{b}", e.b)
+            .replace("{c}", e.c)
+            .replace("{d}", e.d);
+        */
+
+        console.log([e.line + 1 + lineOffset, e.column + charOffset, e.message].join(" :: "));
+      });
+  }
+}());
