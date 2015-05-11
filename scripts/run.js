@@ -169,10 +169,6 @@
 
   function doLint(data, options, globals, lineOffset, charOffset) {
 
-    var result = {
-      warnings: []
-    };
-
     // Globals to JSLint
     var globalList = [];
     for (var global in globals) {
@@ -180,28 +176,41 @@
     }
 
     // Lint the code and write readable error output to the console.
+    var result = [];
     try {
       result = jslint(data, options, globalList);
     } catch (e) {}
 
-    result.warnings.forEach(function(e) {
+    var oldLinter = false;
+    var errors;
+    if (jslint.errors) {
+      oldLinter = true;
+      errors = jslint.errors;
+    } else {
+      errors = result.warnings;
+    }
+    errors.forEach(function(e) {
 
-        // If the argument is null, then we could not continue (too many errors).
-        if (!e) {
-          return;
-        }
+      // If the argument is null, then we could not continue (too many errors).
+      if (!e) {
+        return;
+      }
 
+      if (oldLinter) {
         // Do some formatting if the error data is available.
-        /*
         if (e.raw) {
           var message = e.raw
             .replace("{a}", e.a)
             .replace("{b}", e.b)
             .replace("{c}", e.c)
             .replace("{d}", e.d);
-        */
+        }
 
+        console.log([e.line + lineOffset, e.character + charOffset, message].join(" :: "));
+      } else {
         console.log([e.line + 1 + lineOffset, e.column + 1 + charOffset, e.message].join(" :: "));
-      });
+      }
+
+    });
   }
 }());
