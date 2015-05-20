@@ -64,11 +64,12 @@
     // Mark the output as being from JSLint.
     console.log("*** JSLint output ***");
 
+    // First non whitespace character is &lt, so most definitely markup.
+    var regexp = /<script[^>]*>([^]*?)<\/script\s*>/gim;
+
     // If this is a markup file (html, xml, xhtml etc.), then javascript
     // is maybe present in a <script> tag. Try to extract it and lint.
-    if (data.match(/^\s*</)) {
-      // First non whitespace character is &lt, so most definitely markup.
-      var regexp = /<script[^>]*>([^]*?)<\/script\s*>/gim;
+    if (data.match(regexp)) {
       var script, text, prevLines, lineOffset;
 
       while (script = regexp.exec(data)) {
