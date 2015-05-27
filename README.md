@@ -1,13 +1,16 @@
 # JSLint Gutter for Sublime Text 2 and 3 via node.js
-#### [JSLint](https://github.com/douglascrockford/JSLint)
-#### [JSHint Gutter](https://github.com/victorporof/Sublime-JSHint)
-#### [Node.js download](http://nodejs.org/#download)
-#### [Sublime Text 3](http://www.sublimetext.com/3)
+
+[![Code Climate](https://codeclimate.com/github/jlsalvador/Sublime-JSLint/badges/gpa.svg)](https://codeclimate.com/github/jlsalvador/Sublime-JSLint)
 
 ## About
 This is a fork from [JSHint Gutter](https://github.com/victorporof/Sublime-JSHint) because in my current job we use JSLint, but I like "JSHint Gutter" instead of [Sublime-JSLint](https://github.com/73rhodes/Sublime-JSLint), so... I fork them.
 
 This is a Sublime Text 2 and 3 plugin allowing you to check your JavaScript code for nasty errors, coding conventions and other goodies. It relies on JSLint (developed by Douglas Crockford). The linter is itself written in JavaScript, so you'll need something (node.js) to interpret JavaScript code outside the browser.
+
+- [JSLint](https://github.com/douglascrockford/JSLint)
+- [JSHint Gutter](https://github.com/victorporof/Sublime-JSHint)
+- [Node.js download](http://nodejs.org/#download)
+- [Sublime Text 3](http://www.sublimetext.com/3)
 
 ![Screenshot](https://raw.githubusercontent.com/jlsalvador/Sublime-JSLint/master/imgs/screenshot.png)
 
