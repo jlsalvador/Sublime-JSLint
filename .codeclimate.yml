@@ -4,4 +4,5 @@ languages:
   PHP: false
   Python: true
 exclude_paths:
-- "scripts/node_modules"
+- "scripts/js*.js"
+- "scripts/node_modules/*"
