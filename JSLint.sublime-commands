@@ -1,19 +1,7 @@
 [{
-  "caption": "JSLint",
+  "caption": "JSLint Gutter: Lint Code",
   "command": "jslint"
 }, {
-  "caption": "JSLint: Set Linting Preferences",
-  "command": "jslint_set_linting_prefs"
-}, {
-  "caption": "JSLint: Set Plugin Options",
-  "command": "jslint_set_plugin_options"
-}, {
-  "caption": "JSLint: Set Keyboard Shortcuts",
-  "command": "jslint_set_keyboard_shortcuts"
-}, {
-  "caption": "JSLint: Set `node` Path",
-  "command": "jslint_set_node_path"
-}, {
-  "caption": "JSLint: Clear Annotations",
+  "caption": "JSLint Gutter: Clear Annotations",
   "command": "jslint_clear_annotations"
 }]

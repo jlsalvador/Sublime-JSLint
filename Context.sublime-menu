@@ -1,22 +1,11 @@
 [{
   "caption": "JSLint",
+  "id": "jslint_context",
   "children": [{
     "caption": "Lint Code",
     "command": "jslint"
   }, {
-    "caption": "Set Linting Preferences",
-    "command": "jslint_set_linting_prefs"
-  }, {
-    "caption": "Set Plugin Options",
-    "command": "jslint_set_plugin_options"
-  },  {
-    "caption": "Set Keyboard Shortcuts",
-    "command": "jslint_set_keyboard_shortcuts"
-  }, {
     "caption": "Clear Annotations",
     "command": "jslint_clear_annotations"
-  }, {
-    "caption": "Set `node` Path",
-    "command": "jslint_set_node_path"
   }]
 }]
