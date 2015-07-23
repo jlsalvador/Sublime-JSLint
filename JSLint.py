@@ -21,7 +21,7 @@ except ImportError:
 
 PLUGIN_FOLDER = os.path.dirname(os.path.realpath(__file__))
 RC_FILE = ".jslintrc"
-SETTINGS_FILE = "JSLint.sublime-settings"
+SETTINGS_FILE = "JSLintGutter.sublime-settings"
 KEYMAP_FILE = "Default ($PLATFORM).sublime-keymap"
 OUTPUT_VALID = b"*** JSLint output ***"
 

@@ -7,20 +7,8 @@
       "caption": "Lint Code",
       "command": "jslint"
     }, {
-      "caption": "Set Linting Preferences",
-      "command": "jslint_set_linting_prefs"
-    }, {
-      "caption": "Set Plugin Options",
-      "command": "jslint_set_plugin_options"
-    }, {
-      "caption": "Set Keyboard Shortcuts",
-      "command": "jslint_set_keyboard_shortcuts"
-    }, {
       "caption": "Clear Annotations",
       "command": "jslint_clear_annotations"
-    }, {
-      "caption": "Set `node` Path",
-      "command": "jslint_set_node_path"
     }]
   }]
 }, {
@@ -30,24 +18,85 @@
     "children": [{
       "caption": "JSLint Gutter",
       "children": [{
-        "caption": "Lint Code",
-        "command": "jslint"
-      }, {
-        "caption": "Set Linting Preferences",
-        "command": "jslint_set_linting_prefs"
-      }, {
-        "caption": "Set Plugin Options",
-        "command": "jslint_set_plugin_options"
-      }, {
-        "caption": "Set Keyboard Shortcuts",
-        "command": "jslint_set_keyboard_shortcuts"
-      }, {
-        "caption": "Clear Annotations",
-        "command": "jslint_clear_annotations"
-      }, {
-        "caption": "Set `node` Path",
-        "command": "jslint_set_node_path"
-      }]
+          "caption": "README",
+          "command": "open_file",
+          "args": {
+            "file": "${packages}/Sublime-JSLint/README.md"
+          }
+        }, {
+          "caption": "-"
+        }, {
+          "caption": "Settings - Default",
+          "command": "open_file",
+          "args": {
+            "file": "${packages}/Sublime-JSLint/JSLintGutter.sublime-settings"
+          }
+        }, {
+          "caption": "Settings - User",
+          "command": "open_file",
+          "args": {
+            "file": "${packages}/User/JSLintGutter.sublime-settings"
+          }
+        }, {
+          "caption": "-"
+        }, {
+          "caption": "Key Bindings – Default",
+          "command": "open_file",
+          "args": {
+            "file": "${packages}/Sublime-JSLint/Default (OSX).sublime-keymap",
+            "platform": "OSX"
+          }
+        }, {
+          "caption": "Key Bindings – Default",
+          "command": "open_file",
+          "args": {
+            "file": "${packages}/Sublime-JSLint/Default (Linux).sublime-keymap",
+            "platform": "Linux"
+          }
+        }, {
+          "caption": "Key Bindings – Default",
+          "command": "open_file",
+          "args": {
+            "file": "${packages}/Sublime-JSLint/Default (Windows).sublime-keymap",
+            "platform": "Windows"
+          }
+        }, {
+          "caption": "Key Bindings – User",
+          "command": "open_file",
+          "args": {
+            "file": "${packages}/User/Default (OSX).sublime-keymap",
+            "platform": "OSX"
+          }
+        }, {
+          "caption": "Key Bindings – User",
+          "command": "open_file",
+          "args": {
+            "file": "${packages}/User/Default (Linux).sublime-keymap",
+            "platform": "Linux"
+          }
+        }, {
+          "caption": "Key Bindings – User",
+          "command": "open_file",
+          "args": {
+            "file": "${packages}/User/Default (Windows).sublime-keymap",
+            "platform": "Windows"
+          }
+        }, {
+          "caption": "-"
+        }
+        /*, {
+          "caption": "-"
+        }, {
+          "caption": "Set Linting Preferences",
+          "command": "jslint_set_linting_prefs"
+        }, {
+          "caption": "Set Plugin Options",
+          "command": "jslint_set_plugin_options"
+        }, {
+          "caption": "Set `node` Path",
+          "command": "jslint_set_node_path"
+        }*/
+      ]
     }]
   }]
 }]
