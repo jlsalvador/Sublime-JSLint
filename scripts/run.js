@@ -9,13 +9,8 @@
 
     var path = require("path"),
         fs = require("fs"),
-        json_minify = require("node-json-minify");
-
-    // Older versions of node have `existsSync` in the `path` module, not `fs`. Meh.
-    fs.existsSync = fs.existsSync || path.existsSync;
-    path.sep = path.sep || "/";
-
-    var jslint = require("./jslint.js").jslint,
+        json_minify = require("node-json-minify"),
+        jslint = require("./jslint.js").jslint,
         doLint = function (data, options, globals, lineOffset, charOffset) {
 
             // Globals to JSLint
@@ -160,15 +155,14 @@
 
             // Options were set successfully.
             return true;
-        };
-
-    var tempPath = process.argv[2] || "", // The source file to be linted.
+        },
+        tempPath = process.argv[2] || "", // The source file to be linted.
         filePath = process.argv[3] || "", // The original source's path.
         pluginFolder = path.dirname(__dirname),
         sourceFolder = path.dirname(filePath),
         options = {},
         globals = {},
-        jslintrcPath = pluginFolder + path.sep + ".jslintrc",
+        jslintrcPath = pluginFolder + (path.sep || "/") + ".jslintrc",
         packagejsonPath;
 
     // Try and get some persistent options from the plugin folder.
@@ -177,9 +171,10 @@
             setOptions(jslintrcPath, false, options, globals);
         }
 
-        // When a JSHint config file exists in the same directory as the source file,
+        // When a JSLint config file exists in the same directory as the source file,
         // any directory above, or the user's home folder, then use that configuration
         // to overwrite the default prefs.
+        path.sep = path.sep || "/";
         var sourceFolderParts = path.resolve(sourceFolder).split(path.sep),
             pathsToLook = sourceFolderParts.map(function (value, key) {
                 return sourceFolderParts.slice(0, key + 1).join(path.sep);
@@ -190,10 +185,13 @@
         pathsToLook.push(process.env.HOME || path.join(process.env.HOMEDRIVE, process.env.HOMEPATH) || process.env.USERPROFILE);
 
         pathsToLook.some(function (pathToLook) {
-            if (fs.existsSync(jslintrcPath = path.join(pathToLook, ".jslintrc"))) {
+            fs.existsSync = fs.existsSync || path.existsSync; // Older versions of node have `existsSync` in the `path` module, not `fs`. Meh.
+            jslintrcPath = path.join(pathToLook, ".jslintrc");
+            if (fs.existsSync(jslintrcPath)) {
                 return setOptions(jslintrcPath, false, options, globals);
             }
-            if (fs.existsSync(packagejsonPath = path.join(pathToLook, "package.json"))) {
+            packagejsonPath = path.join(pathToLook, "package.json");
+            if (fs.existsSync(packagejsonPath)) {
                 return setOptions(packagejsonPath, true, options, globals);
             }
         });
@@ -212,14 +210,15 @@
             console.log("*** JSLint output ***");
 
             // First non whitespace character is &lt, so most definitely markup.
-            var regexp = /<script[^>]*>([^]*?)<\/script\s*>/gim;
+            var text, prevLines, lineOffset, isFirstLine, columnOffset, trunks,
+                regexp = /<script[^>]*>([^]*?)<\/script\s*>/gim,
+                script = regexp.exec(data);
 
             // If this is a markup file (html, xml, xhtml etc.), then javascript
             // is maybe present in a <script> tag. Try to extract it and lint.
             if (data.match(regexp)) {
-                var script, text, prevLines, lineOffset, isFirstLine, spacesOnLeft, columnOffset, trunks;
 
-                while (script = regexp.exec(data)) {
+                while (script !== null) {
                     isFirstLine = true;
                     // Script contents are captured at index 1.
                     text = script[1];
@@ -243,6 +242,7 @@
                     text = trunks.join('\n');
 
                     doLint(text, options, globals, lineOffset, columnOffset);
+                    script = regexp.exec(data);
                 }
             } else {
                 doLint(data, options, globals, 0, 0);
